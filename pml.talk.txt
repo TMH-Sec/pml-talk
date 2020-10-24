@@ -1,0 +1,128 @@
+PREREQS
+1) sbc or vm or container or computer (always on helps) and running linux(this talk uses ubuntu on an odroid xu-4, commands and locations could be different of course). upgrade it! 
+
+--info https://en.wikipedia.org/wiki/Syslog
+
+--this really helped me get started https://doku.ben00it.fr/dokuwiki/doku.php?id=linux:configuration:siem_pimpmylog
+
+--every time you see nano used, there is a file to match in downloadable content
+
+--you could use vim or emacs if you must ;)
+
+2) local dns is optional but for ssl - DO IT! - you can use pi-hole  - for reference, see the August 2020 talk from hacktheplanet for setting up a pi-hole and dhcp reservations... https://www.youtube.com/watch?v=lVHgkDvpNt4
+there is a nice local dns tab on the pi-hole, if you are into self punishment - you can use bind9 ;)
+
+3) you need a static ip on the syslog server/visualizer and can run dns/pi-hole on same device
+ 
+4) you need a sudo user, in my case root is disabled by changing the root shell from 
+/bin/bash to /bin/false in /etc/passwd - make sure your user is in sudoers before you disable -- if i had a dollar...
+
+5) other devices that are sending syslog info to your dns name or ip on udp port 514
+in my case it's a router and switch
+
+CONFIGURE RSYSLOG
+
+--comes with linux for the most part
+
+sudo dpkg-reconfigure tzdata
+
+--to set up timezone
+
+sudo cp /etc/rsyslog.conf /etc/rsyslog.conf.bak
+
+--back up all the things!
+
+sudo nano /etc/rsyslog.conf 
+sudo service rsyslog restart
+
+SET UP APACHE, PHP AND PML
+sudo apt install apache2
+
+--navigate to http://dnsname or http://staticip and check for default page
+
+cd /var/www/html
+sudo rm index.html
+ls -la
+
+--nice empty directory
+
+sudo apt install git
+sudo apt install php php-mbstring php-xml
+sudo git clone https://github.com/potsky/PimpMyLog.git .
+sudo chown -R  www-data:www-data /var/www/html
+sudo nano /etc/logrotate.d/apache2
+
+--if you don't setup the permissions, PML will complain after log rotation
+
+sudo chown root:www-data /var/log/apache2/error.log
+sudo chown root:www-data /var/log/apache2/access.log
+sudo service apache2 reload
+
+--navigate to http://dnsname/ or http://staticip -- set it up for apache2 logs
+
+CUSTOM LOG PARSING
+sudo mkdir config.user.d
+cd config.user.d/
+
+--for generic rsyslog parsing use "sudo nano generic-rsyslog.json" see downloadable files
+
+sudo nano firewall.json
+sudo nano switch.json
+sudo chown -R www-data:www-data /var/www/html/config.user.d
+
+--navigate to page to check you didn't mess stuff up
+
+--pml is setup -- you could stop here -- but even on my LAN, i don't like using unencrypted protocols
+
+--so we will set up a CA and import it to a browser so that any cert issued by it will keep the browser from complaining
+
+--doing this without local dns is beyond the scope of this talk
+
+MIGRATE TO SSL
+cd ~
+mkdir .ca
+cd .ca
+openssl genrsa -des3 -out madCA.key 2048
+openssl req -x509 -new -nodes -key madCA.key -sha256 -days 1825 -out madCA.pem
+cat madCA.pem
+
+--import to favorite browsers
+
+openssl genrsa -out srv.mad.hive.key 2048
+openssl req -new -key srv.mad.hive.key -out srv.mad.hive.csr
+nano srv.mad.hive.ext
+openssl x509 -req -in srv.mad.hive.csr -CA madCA.pem -CAkey madCA.key -CAcreateserial -out srv.mad.hive.crt -days 999 -sha256 -extfile srv.mad.hive.ext
+chmod 0400 *
+ls -la   --for your sanity
+
+sudo cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/000-default.conf.bak
+sudo cp /etc/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available/srv.mad.hive-ssl.conf
+sudo nano /etc/apache2/sites-available/000-default.conf
+
+--i just modified the default config for redirection
+
+sudo nano /etc/apache2/sites-available/srv.mad.hive-ssl.conf
+sudo a2enmod ssl
+sudo a2ensite srv.mad.hive-ssl
+sudo service apache2 reload
+
+--navigate to it and check, it should be over https now with no complaints
+
+--firewalls are good practice
+
+FIREWALL
+sudo apt install ufw
+sudo ufw allow ssh
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw allow 514/udp
+
+--if you run dns on same device 'sudo ufw allow dns'
+
+--if you have other things running here add the ports 
+
+sudo ufw enable
+sudo ufw status
+
+That's it in a nutshell :)
+Thank you for tuning in!
