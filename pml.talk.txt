@@ -1,5 +1,6 @@
 PREREQS
-1) sbc or vm or container or computer (always on helps) and running linux(this talk uses ubuntu on an odroid xu-4, commands and locations could be different of course). upgrade it! 
+1) sbc or vm or container or computer (always on helps) and running linux(this talk uses ubuntu on an odroid xu-4, 
+commands and locations could be different of course). upgrade it! 
 
 --info https://en.wikipedia.org/wiki/Syslog
 
@@ -9,7 +10,8 @@ PREREQS
 
 --you could use vim or emacs if you must ;)
 
-2) local dns is optional but for ssl - DO IT! - you can use pi-hole  - for reference, see the August 2020 talk from hacktheplanet for setting up a pi-hole and dhcp reservations... https://www.youtube.com/watch?v=lVHgkDvpNt4
+2) local dns is optional but for ssl - DO IT! - you can use pi-hole  - for reference, see the August 2020 talk from 
+hacktheplanet for setting up a pi-hole and dhcp reservations... https://www.youtube.com/watch?v=lVHgkDvpNt4
 there is a nice local dns tab on the pi-hole, if you are into self punishment - you can use bind9 ;)
 
 3) you need a static ip on the syslog server/visualizer and can run dns/pi-hole on same device
