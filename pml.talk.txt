@@ -1,6 +1,6 @@
 PREREQS
-1) sbc or vm or container or computer (always on helps) and running linux(this talk uses ubuntu on an odroid xu-4, 
-commands and locations could be different of course). upgrade it! 
+1) sbc e.g rpi or vm or container or computer (always on helps) and running linux(this talk uses ubuntu minimal on an 
+odroid xu-4|single board computer|, commands and locations could be different of course). upgrade it! 
 
 --info https://en.wikipedia.org/wiki/Syslog
 
@@ -49,20 +49,26 @@ ls -la
 --nice empty directory
 
 sudo apt install git
-sudo apt install php php-mbstring php-xml
+sudo apt install php 
+sudo apt install php-mbstring php-xml
 sudo git clone https://github.com/potsky/PimpMyLog.git .
 sudo chown -R  www-data:www-data /var/www/html
+sudo cp /etc/logrotate.d/apache2 /etc/logrotate.d/apache2.bak
 sudo nano /etc/logrotate.d/apache2
 
 --if you don't setup the permissions, PML will complain after log rotation
 
-sudo chown root:www-data /var/log/apache2/error.log
-sudo chown root:www-data /var/log/apache2/access.log
+sudo chown -R root:www-data /var/log/apache2
 sudo service apache2 reload
 
---navigate to http://dnsname/ or http://staticip -- set it up for apache2 logs
+--navigate to http://dnsname/ or http://staticip -- set PML up for apache2 logs
 
 CUSTOM LOG PARSING
+
+--note: when making custom configs -- keep the regex simple, wrap the statement in pipes after ending with a $
+
+--you cannot use pipes in between, no negation, etc. good luck!
+
 sudo mkdir config.user.d
 cd config.user.d/
 
