@@ -22,6 +22,8 @@ there is a nice local dns tab on the pi-hole, if you are into self punishment - 
 5) other devices that are sending syslog info to your dns name or ip on udp port 514
 in my case it's a router and switch
 
+6) you can do this from windows, by enabling native ssh as an optional feature or using something like putty. the demo uses linux
+
 CONFIGURE RSYSLOG
 
 --comes with linux for the most part
