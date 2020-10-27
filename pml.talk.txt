@@ -68,6 +68,8 @@ sudo service apache2 reload
 CUSTOM LOG PARSING
 
 --note: when making custom configs -- keep the regex simple, wrap the statement in pipes after ending with a $
+--if you find your custom regex is grabbing too many messages, try putting \n after the last pipe
+--it still will burry messages that don't fit your format, but will display all the ones that do
 
 --you cannot use pipes in between, no negation, etc. good luck!
 
