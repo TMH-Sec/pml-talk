@@ -1,10 +1,18 @@
+CREDS
+
+https://www.pimpmylog.com/
+https://github.com/potsky/PimpMyLog
+
+Shilin He, Jieming Zhu, Pinjia He, Michael R. Lyu. Loghub: A Large Collection of System Log Datasets towards Automated Log Analytics. Arxiv, 2020.
+https://github.com/logpai/loghub
+
+https://doku.ben00it.fr/dokuwiki/doku.php?id=linux:configuration:siem_pimpmylog
+
 PREREQS
 1) sbc e.g rpi or vm or container or computer (always on helps) and running linux(this talk uses ubuntu minimal on an 
 odroid xu-4|single board computer|, commands and locations could be different of course). upgrade it! 
 
 --info https://en.wikipedia.org/wiki/Syslog
-
---this really helped me get started https://doku.ben00it.fr/dokuwiki/doku.php?id=linux:configuration:siem_pimpmylog
 
 --every time you see nano used, there is a file to match in downloadable content
 
@@ -136,5 +144,5 @@ sudo ufw allow 514/udp
 sudo ufw enable
 sudo ufw status
 
-That's it in a nutshell :)
+That's it. :)
 Thank you for tuning in!
